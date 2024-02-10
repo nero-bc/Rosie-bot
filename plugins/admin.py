@@ -239,10 +239,13 @@ async def userinfo(client, message):
         f"<b>➲Today Recieved:</b> <code>{today_recieved}</code>\n"
     )
 
-    await message.reply_text(
+    m = await message.reply_text(
         text=message_text,
         disable_web_page_preview=True
     )
+    await message.delete()
+    await asyncio.sleep(WAIT_TIME)
+    await m.delete()
 
 
 @Client.on_message(filters.command(['upgrade', 'premium']))
@@ -252,11 +255,14 @@ async def upgrademsg(_, message):
                 InlineKeyboardButton('◀️ Back', callback_data="home")
             ]]
     tnc= f"<a href=https://t.me/{temp.U_NAME}?start=terms>T&C apply</a>"
-    await message.reply(
+    m = await message.reply(
         text=script.REMADS_TEXT.format(tnc),
         reply_markup=InlineKeyboardMarkup(buttons),
         disable_web_page_preview=True,
         )
+    await message.delete()
+    await asyncio.sleep(WAIT_TIME)
+    await m.delete()
 
 # optional command to list all commands
 @Client.on_message(filters.command("commands") & filters.user(ADMINS))
@@ -344,7 +350,7 @@ async def latests(_, message):
         limit = int(message.command[1])
     except (IndexError, ValueError):
         limit = 20
-
+    await message.delete()
     m = await message.reply_text(f"<b>Please wait, fetching latest searches...</b>")
     top_messages = await mdb.get_top_messages(limit)
 
