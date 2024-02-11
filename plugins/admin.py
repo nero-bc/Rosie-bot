@@ -500,7 +500,6 @@ async def admin_controll(client, message):
     ]
 
     buttons_config_without_mdb = [
-        ("1 Time Ads", "one_time_ads"),
         ("Auto Filter", "auto_filter_all"),
         ("Shortner", "shortner"),
         ("DeleteFiles", "delback"),

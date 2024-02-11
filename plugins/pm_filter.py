@@ -61,7 +61,6 @@ async def filters_private_handlers(client, message):
     today = datetime.now(kolkata).strftime("%Y-%m-%d")
 
     maintenance_mode = await mdb.get_configuration_value("maintenance_mode")
-    one_file_one_link = await mdb.get_configuration_value("one_link")
     private_filter = await mdb.get_configuration_value("private_filter")
     forcesub = await mdb.get_configuration_value("forcesub")
 
@@ -730,10 +729,6 @@ async def cb_handler(client: Client, query: CallbackQuery):
     #maintainance
     elif query.data == "maintenance":
         await toggle_config(query, "maintenance_mode", "Maintenance mode")
-    elif query.data == "1link1file":
-        await toggle_config(query, "one_link", "Single Ads in private")
-    elif query.data == "1linkgroup":
-        await toggle_config(query, "one_link_one_file_group", "Single Ads in group")
     elif query.data == "autoapprove":
         await toggle_config(query, "auto_accept", "Auto approve")
     elif query.data == "private_filter":
@@ -748,18 +743,6 @@ async def cb_handler(client: Client, query: CallbackQuery):
         await toggle_config(query, "forcesub", "Force Subscribe")
     elif query.data == "no_ads":
         await toggle_config(query, "no_ads", "No Ads")
-
-    elif query.data == "one_time_ads":
-        button=[
-            [InlineKeyboardButton("Single Ads in private ⚪️" if await mdb.get_configuration_value("one_link") else "Single Ads in private", callback_data="1link1file")],
-            [InlineKeyboardButton("Single Ads in Group ⚪️" if await mdb.get_configuration_value("one_link_one_file_group") else "Single  Ads in Group", callback_data="1linkgroup")]
-            ]
-        reply_markup = InlineKeyboardMarkup(button)
-        await query.message.edit(
-            text=f"<b>Choose the option</b>",
-            reply_markup=reply_markup,
-            disable_web_page_preview=True,
-        )
         
     elif query.data == "auto_filter_all":
         button=[
