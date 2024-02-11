@@ -16,9 +16,6 @@ from database.users_chats_db import db
 from database.config_db import mdb
 from pyrogram.errors import MessageNotModified
 from utils import get_size, is_subscribed, search_gagala, temp, replace_blacklist, fetch_quote_content
-from plugins.shortner import shortlink as link_shortner
-from plugins.paid_filter import paid_filter
-from plugins.free_filter import free_filter
 from database.ia_filterdb import Media, get_file_details, get_search_results
 from database.filters_mdb import find_filter
 import logging
@@ -66,7 +63,6 @@ async def filters_private_handlers(client, message):
     maintenance_mode = await mdb.get_configuration_value("maintenance_mode")
     one_file_one_link = await mdb.get_configuration_value("one_link")
     private_filter = await mdb.get_configuration_value("private_filter")
-    no_ads = await mdb.get_configuration_value("no_ads")
     forcesub = await mdb.get_configuration_value("forcesub")
 
     # update top messages
@@ -96,6 +92,7 @@ async def filters_private_handlers(client, message):
     if last_reset != today:
         await db.reset_all_files_count()
         await mdb.delete_all_messages()
+        await db.reset_verification_status()
     
     if maintenance_mode is True:
         await message.reply_text(f"<b>Sorry For The Inconvenience, We Are Under Maintenance. Please Try Again Later</b>", disable_web_page_preview=True)
@@ -131,14 +128,6 @@ async def filters_private_handlers(client, message):
             if duration == 28 and files_counts >= 30:
                 await msg.edit(f"<b>You Can Only Get 30 Files a Day, Please Wait For {time_difference} Hours To Request Again</b>")
                 return
-                
-            text, markup = await paid_filter(client, message)
-            filter = await msg.edit(text=text, reply_markup=markup, disable_web_page_preview=True)
-
-        elif no_ads is True:
-            text, markup = await paid_filter(client, message)
-            filter = await msg.edit(text=text, reply_markup=markup, disable_web_page_preview=True)
-
         else:
             if user_timestamps:
                 current_time = int(time.time())
@@ -158,18 +147,12 @@ async def filters_private_handlers(client, message):
                     f"<b>You Have Reached Your Daily Limit. Please Try After {time_difference} Hours, or  <a href=https://t.me/{temp.U_NAME}?start=upgrade>Upgrade</a> To Premium For Unlimited Request.</b>",
                     disable_web_page_preview=True)
                 return
-        
-            try:
-                if one_file_one_link and (files_counts is not None and files_counts >= 1):
-                    text , button = await free_filter(client, message)
-                else:
-                    text, button = await auto_filter(client, message)
-        
-                filter = await msg.edit(text=text, reply_markup=button, disable_web_page_preview=True)  
-            except:
-                logger.error("Error in auto filter")
+    
+        text, button = await auto_filter(client, message)
+        filter = await msg.edit(text=text, reply_markup=button, disable_web_page_preview=True)  
 
     except Exception as e:
+        logger.error(e)
         await msg.edit(f"<b>Opps! Something Went Wrong.</b>")
 
     finally:
@@ -182,29 +165,12 @@ async def public_group_filter(client, message):
 
     if message.text.startswith("/") or not await mdb.get_configuration_value("group_filter"):
         return
-    
-    files_counts = await db.fetch_value(message.from_user.id, "files_count")
-    one_time_ads = await mdb.get_configuration_value("one_link_one_file_group")
-    no_ads = await mdb.get_configuration_value("no_ads")
-    premium = await db.is_premium_status(message.from_user.id)
     await mdb.update_top_messages(message.from_user.id, message.text)
     
     filter = None
     try:
-        if premium:
-            text, button = await paid_filter(client, message)
-
-        elif no_ads is True:
-            text, button = await paid_filter(client, message)
-
-        elif message.chat.id in AUTH_GROUPS and one_time_ads and files_counts >= 1:
-            text, button = await free_filter(client, message)   
-
-        else:
-            text, button = await auto_filter(client, message)
-
+        text, button = await auto_filter(client, message)
         filter = await message.reply(text=text, reply_markup=button, disable_web_page_preview=True)
-
     except Exception as e:
         logger.error(e)
 
@@ -317,14 +283,16 @@ async def next_page(bot, query):
     # Construct a text message with hyperlinks
     search_results_text = []
     for file in files:
-        shortlink = await link_shortner(f"https://telegram.me/{temp.U_NAME}?start=file_{file.file_id}")
+        user_id = query.from_user.id
+        user_id_bytes = str(user_id).encode('utf-8')  # Convert to bytes
+        urlsafe_encoded_user_id = base64.urlsafe_b64encode(user_id_bytes).decode('utf-8')  # Encode and convert back to string
+        shortlink = f"https://telegram.me/{temp.U_NAME}?start={temp.U_NAME}-{urlsafe_encoded_user_id}_{file.file_id}"
         file_link = f"🎬 [{get_size(file.file_size)} | {await replace_blacklist(file.file_name, script.BLACKLIST)}]({shortlink})"
         search_results_text.append(file_link)
 
     search_results_text = "\n\n".join(search_results_text)
 
     btn = []
-    btn.append([InlineKeyboardButton("🔴 𝐇𝐎𝐖 𝐓𝐎 𝐃𝐎𝐖𝐍𝐋𝐎𝐀𝐃 🔴", url="https://t.me/QuickAnnounce/5")])
     
     if 0 < offset <= 10:
         off_set = 0
@@ -383,7 +351,10 @@ async def auto_filter(_, msg, spoll=False):
         search, files, offset, total_results = spoll
     search_results_text = []
     for file in files:
-        shortlink = await link_shortner(f"https://telegram.me/{temp.U_NAME}?start=file_{file.file_id}")
+        user_id = message.from_user.id
+        user_id_bytes = str(user_id).encode('utf-8')
+        urlsafe_encoded_user_id = base64.urlsafe_b64encode(user_id_bytes).decode('utf-8')
+        shortlink = f"https://telegram.me/{temp.U_NAME}?start={temp.U_NAME}-{urlsafe_encoded_user_id}_{file.file_id}"
         file_link = f"🎬 [{get_size(file.file_size)} | {await replace_blacklist(file.file_name, script.BLACKLIST)}]({shortlink})"
         search_results_text.append(file_link)
 
@@ -400,8 +371,6 @@ async def auto_filter(_, msg, spoll=False):
     if ads is not None and ads_name is not None:
         ads_text=f"[📢 {ads_name}]({f"https://t.me/{temp.U_NAME}?start=ads"})"
         search_results_text = f"{search_results_text}\n\n{ads_text}"
-
-    btn.append([InlineKeyboardButton("🔴 𝐇𝐎𝐖 𝐓𝐎 𝐃𝐎𝐖𝐍𝐋𝐎𝐀𝐃 🔴", url="https://t.me/QuickAnnounce/5")])
     
     if offset != "":
         key = f"{message.chat.id}-{message.id}"
@@ -687,18 +656,6 @@ async def cb_handler(client: Client, query: CallbackQuery):
             ])
         reply_markup = InlineKeyboardMarkup(keyboard)
         await query.message.edit(f"<b>Here is the top searches of the day</b>", reply_markup=reply_markup, disable_web_page_preview=True)
-
-
-    elif query.data.startswith("search#"):
-        search = query.data.split("#")[1]
-        await query.answer(text=f"Searching for your request :)")
-        premium_status = await db.is_premium_status(query.from_user.id)
-        if premium_status is True:
-            text = await callback_paid_filter(search, query)
-            await query.message.edit(text=f"<b>{text}</b>", reply_markup=None, disable_web_page_preview=True)
-        else:    
-            text = await callback_auto_filter(search, query)
-            await query.message.edit(text=f"<b>{text}</b>", reply_markup=None, disable_web_page_preview=True)
  
     # get download button
     elif query.data.startswith("download#"):

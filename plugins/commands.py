@@ -10,7 +10,7 @@ from database.users_chats_db import db
 from database.config_db import mdb
 from info import CHANNELS, ADMINS, FORCESUB_CHANNEL, WAIT_TIME
 from utils import is_subscribed, temp, replace_blacklist
-from database.ia_filterdb import get_search_results
+from plugins.shortner import shortlink
 import re
 import base64
 import pytz
@@ -179,7 +179,6 @@ async def start(client, message):
     time_difference = (next_day_midnight - current_datetime).total_seconds() / 3600
     time_difference = round(time_difference)
 
-
     data = message.command[1].strip()
     if data.startswith(f"{temp.U_NAME}"):
         _, rest_of_data = data.split('-', 1)
@@ -198,6 +197,9 @@ async def start(client, message):
         
         files = files_[0]
         premium_status = await db.is_premium_status(message.from_user.id)
+        no_ads = await mdb.get_configuration_value("no_ads")
+        is_verified = await db.fetch_value(message.from_user.id, "verified")
+
         button = [[
             InlineKeyboardButton("Search", url=f"https://t.me/{temp.U_NAME}"),
             InlineKeyboardButton('Request', url=f"https://Telegram.me/PrimeHubReq")
@@ -207,6 +209,21 @@ async def start(client, message):
             
         if premium_status is not True and files_counts is not None and files_counts >= 15:
                 return await message.reply(f"<b>You Have Exceeded Your Daily Limit. Please Try After {time_difference} Hours, or  <a href=https://t.me/{temp.U_NAME}?start=upgrade>Upgrade</a> To Premium For Unlimited Request.</b>", disable_web_page_preview=True)
+        
+        if premium_status is not True and (is_verified is None or is_verified is False) and no_ads is False and lifetime_files >= 3:
+            user_id = message.from_user.id
+            user_id_bytes = str(user_id).encode('utf-8')  # Convert to bytes
+            urlsafe_encoded_user_id = base64.urlsafe_b64encode(user_id_bytes).decode('utf-8') 
+            verify = await shortlink(f"https://t.me/{temp.U_NAME}?start=verify#{urlsafe_encoded_user_id}")
+            return await message.reply(
+                f"<b>Your free limit is over, Please watch ads to help us sustain, You can click below button to verify yourself and enjoy all day ads free expreience</b>",
+                reply_markup=InlineKeyboardMarkup(
+                    [
+                        [InlineKeyboardButton("Verify Yourself", url=f"{verify}")],
+                        [InlineKeyboardButton("How to Verify", url=f"https://t.me/QuickAnnounce/5")]
+                    ]),
+                disable_web_page_preview=True
+            ) 
         
         media_id = await client.send_cached_media(
             chat_id=message.from_user.id,
@@ -225,6 +242,20 @@ async def start(client, message):
         await asyncio.sleep(waitime or 600)
         await media_id.delete()
         await del_msg.edit("__⊘ This message was deleted__")
+
+    # Verify system
+    elif data.split("-", 1)[0] == "Verify":
+        user_id = int(data.split("#", 1)[1])
+        user_id_bytes = base64.urlsafe_b64decode(user_id) 
+        decoded_user_id = user_id_bytes.decode('utf-8')  # Convert to bytes
+        is_verified = await db.fetch_value(message.from_user.id, "verified")
+        if is_verified is True:
+            return await message.reply(f"<b>You are already verified</b>")
+        if str(decoded_user_id) != str(message.from_user.id):
+            return await message.reply(f"<b>Vefification unsuccessful; You are not a valid user</b>")
+        else:
+            await db.update_value(message.from_user.id, "verified", True)
+            await message.reply(f"<b>Verification successful; You can continue the search</b>")
 
 
     # Referral sysytem
