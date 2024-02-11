@@ -398,7 +398,8 @@ async def auto_filter(_, msg, spoll=False):
     # Ads Placement in auto filter
     ads, ads_name, _ = await mdb.get_advirtisment()
     if ads is not None and ads_name is not None:
-        btn.append([InlineKeyboardButton(text=f"📢 {ads_name}", url=f"https://t.me/{temp.U_NAME}?start=ads")])
+        ads_text=f"[📢 {ads_name}]({f"https://t.me/{temp.U_NAME}?start=ads"})"
+        search_results_text = f"{search_results_text}\n\n{ads_text}"
 
     btn.append([InlineKeyboardButton("🔴 𝐇𝐎𝐖 𝐓𝐎 𝐃𝐎𝐖𝐍𝐋𝐎𝐀𝐃 🔴", url="https://t.me/QuickAnnounce/5")])
     
@@ -418,43 +419,6 @@ async def auto_filter(_, msg, spoll=False):
     # add timestamp to database for floodwait
     await db.update_value(message.from_user.id, "timestamps", int(time.time()))
     return f"<b>{cap}\n\n{search_results_text}</b>", InlineKeyboardMarkup(btn)
-
-
-# callback autofilter
-async def callback_auto_filter(msg, query):
-    search=msg
-    files, _, _ = await get_search_results(search.lower(), max_results=15, offset=0, filter=True)
-    search_results_text = []
-    for file in files:
-        shortlink = await link_shortner(f"https://telegram.me/{temp.U_NAME}?start=file_{file.file_id}")
-        file_link = f"🎬 [{get_size(file.file_size)} | {await replace_blacklist(file.file_name, script.BLACKLIST)}]({shortlink})"
-        search_results_text.append(file_link)
-
-    search_results_text = "\n\n".join(search_results_text)
-    cap = f"Here is what i found for your query {search}"
-    if not search_results_text:
-        return
-    return f"<b>{cap}\n\n{search_results_text}</b>"
-
-# callback paidfilter
-async def callback_paid_filter(msg, query):
-    search=msg
-    files, _, _ = await get_search_results(search.lower(), max_results=15, offset=0, filter=True)
-    search_results_text = []
-    for file in files:
-        user_id = query.from_user.id
-        user_id_bytes = str(user_id).encode('utf-8')  # Convert to bytes
-        urlsafe_encoded_user_id = base64.urlsafe_b64encode(user_id_bytes).decode('utf-8')  # Encode and convert back to string
-        shortlink = f"https://telegram.me/{temp.U_NAME}?start={temp.U_NAME}-{urlsafe_encoded_user_id}_{file.file_id}"
-        file_link = f"🎬 [{get_size(file.file_size)} | {await replace_blacklist(file.file_name, script.BLACKLIST)}]({shortlink})"
-        search_results_text.append(file_link)
-
-    search_results_text = "\n\n".join(search_results_text)
-    cap = f"Here is what i found for your query {search}"
-    if not search_results_text:
-        return
-    return f"<b>{cap}\n\n{search_results_text}</b>"       
-
 
 @Client.on_callback_query()
 async def cb_handler(client: Client, query: CallbackQuery):
