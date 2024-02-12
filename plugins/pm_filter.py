@@ -368,9 +368,11 @@ async def auto_filter(_, msg, spoll=False):
     # Ads Placement in auto filter
     ads, ads_name, _ = await mdb.get_advirtisment()
     if ads is not None and ads_name is not None:
-        ads_text=f"[📢 {ads_name}]({f"https://t.me/{temp.U_NAME}?start=ads"})"
+        ads_url = f"https://t.me/{temp.U_NAME}?start=ads"
+        ads_text = f"[📢 {ads_name}]({ads_url})"
         search_results_text = f"{search_results_text}\n\n{ads_text}"
     
+
     if offset != "":
         key = f"{message.chat.id}-{message.id}"
         BUTTONS[key] = search
