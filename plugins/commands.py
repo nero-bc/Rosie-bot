@@ -248,7 +248,6 @@ async def start(client, message):
         user_id_b64 = data.split("-", 1)[1]
         user_id_bytes = base64.urlsafe_b64decode(user_id_b64 + '==') 
         decoded_user_id = int(user_id_bytes.decode('utf-8'))  # Convert to bytes
-        print(decoded_user_id)
         is_verified = await db.fetch_value(message.from_user.id, "verified")
         if is_verified is True:
             return await message.reply(f"<b>You are already verified</b>")
