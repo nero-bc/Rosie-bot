@@ -68,7 +68,8 @@ async def start(client, message):
         return
     data = message.command[1]
     forcesub = await mdb.get_configuration_value("forcesub")
-    if not data.split("-", 1)[0] == "ReferID" and FORCESUB_CHANNEL and forcesub and not await is_subscribed(client, message):
+    lifetime_files = await db.fetch_value(message.from_user.id, "lifetime_files")
+    if not data.split("-", 1)[0] == "ReferID" and FORCESUB_CHANNEL and forcesub and not await is_subscribed(client, message) and lifetime_files >= 10: # forcesub limit 10
         try:
             invite_link = await client.create_chat_invite_link(int(FORCESUB_CHANNEL), creates_join_request=True)
         except Exception as e:

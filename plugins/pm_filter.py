@@ -51,6 +51,7 @@ async def filters_private_handlers(client, message):
     last_reset = user.get("last_reset")
     referral = await db.fetch_value(user_id, "referral")
     duration = user.get("premium_expiry")
+    lifetime_files_count = user.get("lifetime_files")
 
     kolkata = pytz.timezone('Asia/Kolkata')
     current_datetime = datetime.now(kolkata)
@@ -68,7 +69,7 @@ async def filters_private_handlers(client, message):
     await mdb.update_top_messages(message.from_user.id, message.text)   
 
     invite_link = None
-    if FORCESUB_CHANNEL and forcesub and not await is_subscribed(client, message):
+    if FORCESUB_CHANNEL and forcesub and not await is_subscribed(client, message) and lifetime_files_count >= 10:
         try:
             invite_link = await client.create_chat_invite_link(int(FORCESUB_CHANNEL), creates_join_request=True)
         except Exception as e:
