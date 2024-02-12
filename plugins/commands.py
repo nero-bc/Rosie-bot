@@ -181,6 +181,9 @@ async def start(client, message):
     next_day_midnight = datetime(next_day.year, next_day.month, next_day.day, tzinfo=kolkata)
     time_difference = (next_day_midnight - current_datetime).total_seconds() / 3600
     time_difference = round(time_difference)
+    todays_date = current_datetime.strftime('%d%m%y')
+    base64_date = str(todays_date).encode('utf-8')  # Convert to bytes
+    encoded_todays_date = base64.urlsafe_b64encode(base64_date).decode('utf-8')
 
     data = message.command[1].strip()
     if data.startswith(f"{temp.U_NAME}"):
@@ -217,7 +220,7 @@ async def start(client, message):
             user_id = message.from_user.id
             user_id_bytes = str(user_id).encode('utf-8')  # Convert to bytes
             urlsafe_encoded_user_id = base64.urlsafe_b64encode(user_id_bytes).decode('utf-8') 
-            verify = await shortlink(f"https://t.me/{temp.U_NAME}?start=Verify-{urlsafe_encoded_user_id}")
+            verify = await shortlink(f"https://t.me/{temp.U_NAME}?start=Verify-{urlsafe_encoded_user_id}-{encoded_todays_date}")
             return await message.reply(
                 f"<b>🎏 Your free limit has been reached. To continue enjoying an ad-free experience all day, please verify yourself by clicking the button below or <a href=https://t.me/{temp.U_NAME}?start=upgrade>upgrade to premium</a></b>",
                 reply_markup=InlineKeyboardMarkup(
@@ -248,10 +251,14 @@ async def start(client, message):
 
     # Verify system
     elif data.split("-", 1)[0] == "Verify":
-        user_id_b64 = data.split("-", 1)[1]
+        user_id_b64, date = data.split("-", 1)[1].split("-", 1)  # Correctly split the two base64 values
         user_id_bytes = base64.urlsafe_b64decode(user_id_b64 + '==') 
         decoded_user_id = int(user_id_bytes.decode('utf-8'))  # Convert to bytes
+        decoded_date = base64.urlsafe_b64decode(date + '==')
+        safe_decoded_date = int(decoded_date.decode('utf-8'))
         is_verified = await db.fetch_value(message.from_user.id, "verified")
+        if safe_decoded_date != encoded_todays_date:
+            return await message.reply(f"Unauthorized Access")
         if is_verified is True:
             return await message.reply(f"<b>You are already verified</b>")
         if decoded_user_id != message.from_user.id:
