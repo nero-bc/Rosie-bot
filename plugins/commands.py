@@ -256,8 +256,9 @@ async def start(client, message):
         decoded_user_id = int(user_id_bytes.decode('utf-8'))  # Convert to bytes
         decoded_date = base64.urlsafe_b64decode(date + '==')
         safe_decoded_date = int(decoded_date.decode('utf-8'))
+        print(safe_decoded_date)
         is_verified = await db.fetch_value(message.from_user.id, "verified")
-        if safe_decoded_date != encoded_todays_date:
+        if safe_decoded_date != todays_date:
             return await message.reply(f"Unauthorized Access")
         if is_verified is True:
             return await message.reply(f"<b>You are already verified</b>")
