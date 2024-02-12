@@ -273,11 +273,18 @@ async def start(client, message):
         
         #verify link
         verifi = f"https://t.me/{temp.U_NAME}?start=Verify-{urlsafe_encoded_user_id}-{encoded_todays_date}"
-        veification = await shortlink(verifi)               
+        verification = await shortlink(verifi)               
         is_verified = await db.fetch_value(message.from_user.id, "verified")
 
         if safe_decoded_date != todays_date:
-            return await message.reply(f"<b>Unauthorized Access; Please use this link to verify\n{veification}</b>")
+            return await message.reply(
+                text=f"<b>Invalid verification link; Please click this button below to verify yourself.</b>",
+                reply_markup=InlineKeyboardMarkup(
+                    [
+                        [InlineKeyboardButton("❇️ Verify", url=f"{verification}")]
+                    ]),
+                disable_web_page_preview=True
+                )
         elif is_verified is True:
             return await message.reply(f"<b>You are already verified</b>")
         elif decoded_user_id != message.from_user.id:
