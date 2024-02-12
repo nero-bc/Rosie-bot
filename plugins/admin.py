@@ -374,8 +374,13 @@ async def latests(_, message):
     await message.reply_text(f"<b>Here are the top searches of the day</b>", reply_markup=reply_markup)
     await m.delete()
 
+@Client.on_message(filters.private & filters.command("clear") & filters.user(ADMINS))
+async def clear_latest(_, message):
+    m = await message.reply(f"Clearing all topsearches...")
+    await asyncio.sleep(2)
+    await mdb.delete_all_messages()
+    await m.edit(f"All top searches has been cleared")
 
-# auto approve members 
 @Client.on_chat_join_request((filters.group | filters.channel) & filters.chat(AUTH_GROUPS) if AUTH_GROUPS else (filters.group | filters.channel))
 async def autoapprove(client: Client, message: ChatJoinRequest):
     chat=message.chat
