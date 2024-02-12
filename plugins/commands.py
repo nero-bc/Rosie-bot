@@ -8,7 +8,7 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyb
 from database.ia_filterdb import Media, get_file_details, unpack_new_file_id
 from database.users_chats_db import db
 from database.config_db import mdb
-from info import CHANNELS, ADMINS, FORCESUB_CHANNEL, WAIT_TIME
+from info import CHANNELS, ADMINS, FORCESUB_CHANNEL, WAIT_TIME, FREE_LIMIT
 from utils import is_subscribed, temp, replace_blacklist
 from plugins.shortner import shortlink
 import re
@@ -201,8 +201,8 @@ async def start(client, message):
         is_verified = await db.fetch_value(message.from_user.id, "verified")
 
         button = [[
-            InlineKeyboardButton("Search", url=f"https://t.me/{temp.U_NAME}"),
-            InlineKeyboardButton('Request', url=f"https://Telegram.me/PrimeHubReq")
+            InlineKeyboardButton("🔍 Search", url=f"https://t.me/{temp.U_NAME}"),
+            InlineKeyboardButton('🛎 Request', url=f"https://Telegram.me/PrimeHubReq")
             ]]
         if premium_status is True:
             button.append([InlineKeyboardButton("Watch & Download", callback_data=f"download#{file_id}")])
@@ -210,17 +210,17 @@ async def start(client, message):
         if premium_status is not True and files_counts is not None and files_counts >= 15:
                 return await message.reply(f"<b>You Have Exceeded Your Daily Limit. Please Try After {time_difference} Hours, or  <a href=https://t.me/{temp.U_NAME}?start=upgrade>Upgrade</a> To Premium For Unlimited Request.</b>", disable_web_page_preview=True)
         
-        if premium_status is not True and (is_verified is None or is_verified is False) and no_ads is False and lifetime_files >= 3:
+        if premium_status is not True and (is_verified is None or is_verified is False) and no_ads is False and lifetime_files >= FREE_LIMIT:
             user_id = message.from_user.id
             user_id_bytes = str(user_id).encode('utf-8')  # Convert to bytes
             urlsafe_encoded_user_id = base64.urlsafe_b64encode(user_id_bytes).decode('utf-8') 
             verify = await shortlink(f"https://t.me/{temp.U_NAME}?start=Verify-{urlsafe_encoded_user_id}")
             return await message.reply(
-                f"<b>Your free limit has been reached. To continue enjoying an ad-free experience all day, please verify yourself by clicking the button below or <a href=https://t.me/{temp.U_NAME}?start=upgrade>upgrade</a> to premium</b>",
+                f"<b>⌛️ Your free limit has been reached. To continue enjoying an ad-free experience all day, please verify yourself by clicking the button below or <a href=https://t.me/{temp.U_NAME}?start=upgrade>upgrade</a> to premium</b>",
                 reply_markup=InlineKeyboardMarkup(
                     [
-                        [InlineKeyboardButton("Verify Yourself", url=f"{verify}")],
-                        [InlineKeyboardButton("How to Verify", url=f"https://t.me/QuickAnnounce/5")]
+                        [InlineKeyboardButton("❇️ Verify Yourself", url=f"{verify}")],
+                        [InlineKeyboardButton("🔰 How to Verify", url=f"https://t.me/QuickAnnounce/5")]
                     ]),
                 disable_web_page_preview=True
             ) 
