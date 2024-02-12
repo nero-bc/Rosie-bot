@@ -189,7 +189,6 @@ async def start(client, message):
     encoded_todays_date = base64.urlsafe_b64encode(base64_date).decode('utf-8')
     user_id_bytes = str(user_id).encode('utf-8')  # Convert to bytes
     urlsafe_encoded_user_id = base64.urlsafe_b64encode(user_id_bytes).decode('utf-8')
-    verify_link = await shortlink(f"https://t.me/{temp.U_NAME}?start=Verify#{urlsafe_encoded_user_id}#{encoded_todays_date}")
 
     data = message.command[1].strip()
     if data.startswith(f"{temp.U_NAME}"):
@@ -259,11 +258,11 @@ async def start(client, message):
         decoded_user_id = int(user_id_bytes.decode('utf-8'))  # Convert to bytes
         decoded_date = base64.urlsafe_b64decode(enc_date + '=')
         safe_decoded_date = decoded_date.decode('utf-8')  # Convert to string
-
+        verifi = await shortlink(f"https://t.me/{temp.U_NAME}?start=Verify#{urlsafe_encoded_user_id}#{encoded_todays_date}")
         print(safe_decoded_date)
         is_verified = await db.fetch_value(message.from_user.id, "verified")
         if safe_decoded_date != todays_date:
-            return await message.reply(f"Invalid Link; Please use this link to verify --> {verify_link}")
+            return await message.reply(f"Invalid Link; Please use this link to verify --> {verifi}")
         elif is_verified is True:
             return await message.reply(f"<b>You are already verified</b>")
         elif decoded_user_id != message.from_user.id:
