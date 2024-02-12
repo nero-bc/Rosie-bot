@@ -182,8 +182,6 @@ async def start(client, message):
     time_difference = (next_day_midnight - current_datetime).total_seconds() / 3600
     time_difference = round(time_difference)
     todays_date = current_datetime.strftime('%d%m%y')
-    base64_date = str(todays_date).encode('utf-8')  # Convert to bytes
-    encoded_todays_date = base64.urlsafe_b64encode(base64_date).decode('utf-8')
 
     data = message.command[1].strip()
     if data.startswith(f"{temp.U_NAME}"):
@@ -191,7 +189,6 @@ async def start(client, message):
         encypted_user_id, file_id = rest_of_data.split('_', 1)
         user_id_bytes = base64.urlsafe_b64decode(encypted_user_id)  # Decode from URL-safe base64
         userid = user_id_bytes.decode('utf-8')  # Convert bytes back to string
-        print(userid)
         
         files_ = await get_file_details(file_id)
 
@@ -218,6 +215,8 @@ async def start(client, message):
         
         if premium_status is not True and (is_verified is None or is_verified is False) and no_ads is False and lifetime_files >= FREE_LIMIT:
             user_id = message.from_user.id
+            base64_date = str(todays_date).encode('utf-8')  # Convert to bytes
+            encoded_todays_date = base64.urlsafe_b64encode(base64_date).decode('utf-8')
             user_id_bytes = str(user_id).encode('utf-8')  # Convert to bytes
             urlsafe_encoded_user_id = base64.urlsafe_b64encode(user_id_bytes).decode('utf-8') 
             verify = await shortlink(f"https://t.me/{temp.U_NAME}?start=Verify-{urlsafe_encoded_user_id}-{encoded_todays_date}")
@@ -249,13 +248,17 @@ async def start(client, message):
         await media_id.delete()
         await del_msg.edit("__⊘ This message was deleted__")
 
+
+
     # Verify system
     elif data.split("-", 1)[0] == "Verify":
-        user_id_b64, date = data.split("-", 1)[1].split("-", 1)  # Correctly split the two base64 values
+
+        user_id_b64, enc_date = data.split("-", 1)[1].split("-", 1)  # Correctly split the two base64 values
         user_id_bytes = base64.urlsafe_b64decode(user_id_b64 + '==') 
         decoded_user_id = int(user_id_bytes.decode('utf-8'))  # Convert to bytes
-        decoded_date = base64.urlsafe_b64decode(date + '==')
-        safe_decoded_date = int(decoded_date.decode('utf-8'))
+        decoded_date = base64.urlsafe_b64decode(enc_date + '=')
+        safe_decoded_date = decoded_date.decode('utf-8')  # Convert to string
+
         print(safe_decoded_date)
         is_verified = await db.fetch_value(message.from_user.id, "verified")
         if safe_decoded_date != todays_date:
@@ -267,7 +270,7 @@ async def start(client, message):
         else:
             await db.update_value(message.from_user.id, "verified", True)
             return await message.reply(f"<b>Verification successful; You can continue the search</b>")
-
+        
     # Referral sysytem
     elif data.split("-", 1)[0] == "ReferID":
         invite_id = int(data.split("-", 1)[1])
