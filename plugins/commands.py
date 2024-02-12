@@ -219,7 +219,7 @@ async def start(client, message):
             urlsafe_encoded_user_id = base64.urlsafe_b64encode(user_id_bytes).decode('utf-8') 
             verify = await shortlink(f"https://t.me/{temp.U_NAME}?start=Verify-{urlsafe_encoded_user_id}")
             return await message.reply(
-                f"<b>🎏 Your free limit has been reached. To continue enjoying an ad-free experience all day, please verify yourself by clicking the button below or <a href=https://t.me/{temp.U_NAME}?start=upgrade>upgrade</a> to premium</b>",
+                f"<b>🎏 Your free limit has been reached. To continue enjoying an ad-free experience all day, please verify yourself by clicking the button below or <a href=https://t.me/{temp.U_NAME}?start=upgrade>upgrade to premium</a></b>",
                 reply_markup=InlineKeyboardMarkup(
                     [
                         [InlineKeyboardButton("❇️ Verify Yourself", url=f"{verify}")],
