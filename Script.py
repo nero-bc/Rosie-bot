@@ -28,7 +28,7 @@ Request - <b>{}</b>"""
 
     # Refferal text
     REFFERAL_TEXT = """
-**🔗 Here is your refferal link:\n\n{}\n\n👉🏻Share this link with your friends, Each time they join, Both of you will get 10 refferal points and after 50 points you will get 1 month premium subscription.**
+**🔗 Here is your refferal link:\n\n{}\n\n👉🏻 Share this link with your friends, Each time they join, Both of you will get 10 refferal points and after 50 points you will get 1 month premium subscription.**
     """
 
     # Terms & Conditions
