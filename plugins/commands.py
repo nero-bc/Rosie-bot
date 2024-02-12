@@ -222,11 +222,12 @@ async def start(client, message):
                 return await message.reply(f"<b>You Have Exceeded Your Daily Limit. Please Try After {time_difference} Hours, or  <a href=https://t.me/{temp.U_NAME}?start=upgrade>Upgrade</a> To Premium For Unlimited Request.</b>", disable_web_page_preview=True)
         
         if premium_status is not True and (is_verified is None or is_verified is False) and no_ads is False and lifetime_files >= FREE_LIMIT:
+            verify = await shortlink(f"https://t.me/{temp.U_NAME}?start=Verify#{urlsafe_encoded_user_id}#{encoded_todays_date}")
             return await message.reply(
                 f"<b>🎏 Your free limit has been reached. To continue enjoying an ad-free experience all day, please verify yourself by clicking the button below or <a href=https://t.me/{temp.U_NAME}?start=upgrade>upgrade to premium</a></b>",
                 reply_markup=InlineKeyboardMarkup(
                     [
-                        [InlineKeyboardButton("❇️ Verify Yourself", url=f"{verify_link}")],
+                        [InlineKeyboardButton("❇️ Verify Yourself", url=f"{verify}")],
                         [InlineKeyboardButton("🔰 How to Verify", url=f"https://t.me/QuickAnnounce/5")]
                     ]),
                 disable_web_page_preview=True
