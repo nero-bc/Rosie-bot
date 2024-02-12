@@ -381,6 +381,14 @@ async def clear_latest(_, message):
     await mdb.delete_all_messages()
     await m.edit(f"All top searches has been cleared")
 
+@Client.on_message(filters.private & filters.command("reset_verify") & filters.user(ADMINS))
+async def reset_verify(_, message):
+    m = await message.reply(f"Resetting...")
+    await asyncio.sleep(2)
+    await db.reset_verification_status()
+    await m.edit(f"Resetted")
+ 
+
 @Client.on_chat_join_request((filters.group | filters.channel) & filters.chat(AUTH_GROUPS) if AUTH_GROUPS else (filters.group | filters.channel))
 async def autoapprove(client: Client, message: ChatJoinRequest):
     chat=message.chat
