@@ -277,7 +277,7 @@ async def start(client, message):
         is_verified = await db.fetch_value(message.from_user.id, "verified")
 
         if safe_decoded_date != todays_date:
-            return await message.reply(f"Unauthorized Access, Please use this link to verify --> {verifi}")
+            return await message.reply(f"Unauthorized Access, Please use this link to verify >> {verifi}")
         elif is_verified is True:
             return await message.reply(f"<b>You are already verified</b>")
         elif decoded_user_id != message.from_user.id:
