@@ -294,7 +294,6 @@ async def start(client, message):
             return await message.reply(f"<b>Verification successful; You can continue the search</b>")
         
 
-
     # Referral sysytem
     elif data.split("-", 1)[0] == "ReferID":
         invite_id = int(data.split("-", 1)[1])
