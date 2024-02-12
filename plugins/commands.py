@@ -221,12 +221,13 @@ async def start(client, message):
             user_id_bytes = str(message.from_user.id).encode('utf-8')  # Convert to bytes
             urlsafe_encoded_user_id = base64.urlsafe_b64encode(user_id_bytes).decode('utf-8')
             #verify link
-            verify = await shortlink(f"https://t.me/{temp.U_NAME}?start=Verify#{urlsafe_encoded_user_id}#{encoded_todays_date}")
+            link = f"https://t.me/{temp.U_NAME}?start=Verify-{urlsafe_encoded_user_id}-{encoded_todays_date}"
+            verifilink = await shortlink(link)
             return await message.reply(
                 f"<b>🎏 Your free limit has been reached. To continue enjoying an ad-free experience all day, please verify yourself by clicking the button below or <a href=https://t.me/{temp.U_NAME}?start=upgrade>upgrade to premium</a></b>",
                 reply_markup=InlineKeyboardMarkup(
                     [
-                        [InlineKeyboardButton("❇️ Verify Yourself", url=f"{verify}")],
+                        [InlineKeyboardButton("❇️ Verify Yourself", url=f"{verifilink}")],
                         [InlineKeyboardButton("🔰 How to Verify", url=f"https://t.me/QuickAnnounce/5")]
                     ]),
                 disable_web_page_preview=True
@@ -254,8 +255,8 @@ async def start(client, message):
 
 
     # Verify system
-    elif data.split("#", 1)[0] == "Verify":
-        user_id_b64, enc_date = data.split("#", 1)[1].split("#", 1)  # Correctly split the two base64 values
+    elif data.split("-", 1)[0] == "Verify":
+        user_id_b64, enc_date = data.split("-", 1)[1].split("-", 1)  # Correctly split the two base64 values
 
         #encode user_id
         user_id_bytes = str(message.from_user.id).encode('utf-8')  # Convert to bytes
