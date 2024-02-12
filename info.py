@@ -13,7 +13,7 @@ def is_enabled(value, default):
 # Bot information
 API_ID = environ.get('API_ID', "11948995")
 API_HASH = environ.get('API_HASH', "cdae9279d0105638165415bf2769730d")
-BOT_TOKEN = environ.get('BOT_TOKEN', "5600341219:AAH16Wh8SUL0O6YBw30yGsio2TNIYRfC5xs")
+BOT_TOKEN = environ.get('BOT_TOKEN', "6007364006:AAEjhSOQduYQ0lEOkLs5IRe9-1bduiHDUEY")
 
 # Admins, Channels & Users
 ADMINS = [int(admin) if id_pattern.search(admin) else admin for admin in environ.get('ADMINS', '2141736280').split()]
@@ -28,9 +28,9 @@ INDEX_USER = environ.get('INDEX_USER', '1247742004')
 INDEX_USER.append(ADMINS)
 
 # MongoDB information
-DATABASE_URI = environ.get('DATABASE_URI', "mongodb+srv://rosi:rosi@rosi.zc9sl7q.mongodb.net/?retryWrites=true&w=majority")
-DATABASE_NAME = environ.get('DATABASE_NAME', "rosi")
-COLLECTION_NAME = environ.get('COLLECTION_NAME', 'rosi')
+DATABASE_URI = environ.get('DATABASE_URI', "mongodb+srv://reen:reen@reen.0vz47kq.mongodb.net/?retryWrites=true&w=majority")
+DATABASE_NAME = environ.get('DATABASE_NAME', "reen")
+COLLECTION_NAME = environ.get('COLLECTION_NAME', 'reen')
 
 # Others
 LOG_CHANNEL = int(environ.get('LOG_CHANNEL', '-1001770663662'))
