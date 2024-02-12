@@ -273,7 +273,7 @@ async def start(client, message):
         safe_decoded_date = decoded_date.decode('utf-8')  # Convert to string
         
         #verify link
-        verifi = await shortlink(f"https://t.me/{temp.U_NAME}?start=Verify#{urlsafe_encoded_user_id}#{encoded_todays_date}") 
+        verifi = await shortlink(f"https://t.me/{temp.U_NAME}?start=Verify-{urlsafe_encoded_user_id}-{encoded_todays_date}") 
         is_verified = await db.fetch_value(message.from_user.id, "verified")
 
         if safe_decoded_date != todays_date:
