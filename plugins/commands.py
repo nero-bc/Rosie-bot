@@ -183,6 +183,14 @@ async def start(client, message):
     time_difference = round(time_difference)
     todays_date = current_datetime.strftime('%d%m%y')
 
+    #/////////////////////////////////////////////////
+    user_id = message.from_user.id
+    base64_date = str(todays_date).encode('utf-8')  # Convert to bytes
+    encoded_todays_date = base64.urlsafe_b64encode(base64_date).decode('utf-8')
+    user_id_bytes = str(user_id).encode('utf-8')  # Convert to bytes
+    urlsafe_encoded_user_id = base64.urlsafe_b64encode(user_id_bytes).decode('utf-8')
+    verify_link = await shortlink(f"https://t.me/{temp.U_NAME}?start=Verify#{urlsafe_encoded_user_id}#{encoded_todays_date}")
+
     data = message.command[1].strip()
     if data.startswith(f"{temp.U_NAME}"):
         _, rest_of_data = data.split('-', 1)
@@ -214,17 +222,11 @@ async def start(client, message):
                 return await message.reply(f"<b>You Have Exceeded Your Daily Limit. Please Try After {time_difference} Hours, or  <a href=https://t.me/{temp.U_NAME}?start=upgrade>Upgrade</a> To Premium For Unlimited Request.</b>", disable_web_page_preview=True)
         
         if premium_status is not True and (is_verified is None or is_verified is False) and no_ads is False and lifetime_files >= FREE_LIMIT:
-            user_id = message.from_user.id
-            base64_date = str(todays_date).encode('utf-8')  # Convert to bytes
-            encoded_todays_date = base64.urlsafe_b64encode(base64_date).decode('utf-8')
-            user_id_bytes = str(user_id).encode('utf-8')  # Convert to bytes
-            urlsafe_encoded_user_id = base64.urlsafe_b64encode(user_id_bytes).decode('utf-8') 
-            verify = await shortlink(f"https://t.me/{temp.U_NAME}?start=Verify-{urlsafe_encoded_user_id}-{encoded_todays_date}")
             return await message.reply(
                 f"<b>🎏 Your free limit has been reached. To continue enjoying an ad-free experience all day, please verify yourself by clicking the button below or <a href=https://t.me/{temp.U_NAME}?start=upgrade>upgrade to premium</a></b>",
                 reply_markup=InlineKeyboardMarkup(
                     [
-                        [InlineKeyboardButton("❇️ Verify Yourself", url=f"{verify}")],
+                        [InlineKeyboardButton("❇️ Verify Yourself", url=f"{verify_link}")],
                         [InlineKeyboardButton("🔰 How to Verify", url=f"https://t.me/QuickAnnounce/5")]
                     ]),
                 disable_web_page_preview=True
@@ -248,12 +250,10 @@ async def start(client, message):
         await media_id.delete()
         await del_msg.edit("__⊘ This message was deleted__")
 
-
-
     # Verify system
-    elif data.split("-", 1)[0] == "Verify":
+    elif data.split("#", 1)[0] == "Verify":
+        user_id_b64, enc_date = data.split("#", 1)[1].split("#", 1)  # Correctly split the two base64 values
 
-        user_id_b64, enc_date = data.split("-", 1)[1].split("-", 1)  # Correctly split the two base64 values
         user_id_bytes = base64.urlsafe_b64decode(user_id_b64 + '==') 
         decoded_user_id = int(user_id_bytes.decode('utf-8'))  # Convert to bytes
         decoded_date = base64.urlsafe_b64decode(enc_date + '=')
@@ -262,10 +262,10 @@ async def start(client, message):
         print(safe_decoded_date)
         is_verified = await db.fetch_value(message.from_user.id, "verified")
         if safe_decoded_date != todays_date:
-            return await message.reply(f"Unauthorized Access")
-        if is_verified is True:
+            return await message.reply(f"Invalid Link; Please use this link to verify --> {verify_link}")
+        elif is_verified is True:
             return await message.reply(f"<b>You are already verified</b>")
-        if decoded_user_id != message.from_user.id:
+        elif decoded_user_id != message.from_user.id:
             return await message.reply(f"<b>Verification unsuccessful; You are not a valid user</b>")
         else:
             await db.update_value(message.from_user.id, "verified", True)
