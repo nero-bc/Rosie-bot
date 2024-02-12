@@ -526,7 +526,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
                     InlineKeyboardButton('◀️ Back', callback_data="home")
                 ]]
         await query.message.edit(
-            text=f"<b>Here is your refferal link:\n\n{refferal_link}\n\nShare this link with your friends, Each time they join, Both of you will get 10 refferal points and after 50 points you will get 1 month premium subscription.</b>",
+            text=script.REFFERAL_TEXT.format(refferal_link),
             reply_markup=InlineKeyboardMarkup(buttons),
             disable_web_page_preview=True,
         )
