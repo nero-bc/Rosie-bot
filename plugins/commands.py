@@ -224,7 +224,7 @@ async def start(client, message):
             #verify link
             link = f"https://t.me/{temp.U_NAME}?start=Verify-{urlsafe_encoded_user_id}-{encoded_todays_date}"
             verifilink = await shortlink(link)
-            return await message.reply(
+            await message.reply(
                 f"<b>🎏 Your free limit has been reached. To continue enjoying an ad-free experience full day, please verify yourself by clicking the button below or <a href=https://t.me/{temp.U_NAME}?start=upgrade>upgrade to premium</a></b>",
                 reply_markup=InlineKeyboardMarkup(
                     [
@@ -232,9 +232,9 @@ async def start(client, message):
                         [InlineKeyboardButton("🔰 How to Verify", url=f"https://t.me/QuickAnnounce/5")]
                     ]),
                 disable_web_page_preview=True
-            ) 
+            )
+            return
         
-
         media_id = await client.send_cached_media(
             chat_id=message.from_user.id,
             file_id=file_id,
@@ -251,7 +251,8 @@ async def start(client, message):
         
         await asyncio.sleep(waitime or 600)
         await media_id.delete()
-        await del_msg.edit("__⊘ This message was deleted__")
+        return await del_msg.edit("__⊘ This message was deleted__")
+    
 
 
     # Verify system
@@ -388,7 +389,7 @@ async def start(client, message):
     
         await asyncio.sleep(waitime or 600)
         await media_id.delete()
-        await del_msg.edit("__⊘ This message was deleted__")
+        return await del_msg.edit("__⊘ This message was deleted__")
     except Exception as e:
         logger.error(e)
 
