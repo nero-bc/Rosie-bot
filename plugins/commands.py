@@ -216,7 +216,7 @@ async def start(client, message):
             urlsafe_encoded_user_id = base64.urlsafe_b64encode(user_id_bytes).decode('utf-8') 
             verify = await shortlink(f"https://t.me/{temp.U_NAME}?start=Verify-{urlsafe_encoded_user_id}")
             return await message.reply(
-                f"<b>Your free limit is over, Please watch ads to help us sustain, You can click below button to verify yourself and enjoy all day ads free expreience.</b>",
+                f"<b>Your free limit has been reached. To continue enjoying an ad-free experience all day, please verify yourself by clicking the button below or <a href=https://t.me/{temp.U_NAME}?start=upgrade>upgrade</a> to premium</b>",
                 reply_markup=InlineKeyboardMarkup(
                     [
                         [InlineKeyboardButton("Verify Yourself", url=f"{verify}")],
@@ -256,7 +256,7 @@ async def start(client, message):
             return await message.reply(f"<b>Verification unsuccessful; You are not a valid user</b>")
         else:
             await db.update_value(message.from_user.id, "verified", True)
-            await message.reply(f"<b>Verification successful; You can continue the search</b>")
+            return await message.reply(f"<b>Verification successful; You can continue the search</b>")
 
     # Referral sysytem
     elif data.split("-", 1)[0] == "ReferID":
