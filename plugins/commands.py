@@ -224,7 +224,7 @@ async def start(client, message):
             link = f"https://t.me/{temp.U_NAME}?start=Verify-{urlsafe_encoded_user_id}-{encoded_todays_date}"
             verifilink = await shortlink(link)
             return await message.reply(
-                f"<b>🎏 Your free limit has been reached. To continue enjoying an ad-free experience all day, please verify yourself by clicking the button below or <a href=https://t.me/{temp.U_NAME}?start=upgrade>upgrade to premium</a></b>",
+                f"<b>🎏 Your free limit has been reached. To continue enjoying an ad-free experience full day, please verify yourself by clicking the button below or <a href=https://t.me/{temp.U_NAME}?start=upgrade>upgrade to premium</a></b>",
                 reply_markup=InlineKeyboardMarkup(
                     [
                         [InlineKeyboardButton("❇️ Verify Yourself", url=f"{verifilink}")],
