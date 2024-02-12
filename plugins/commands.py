@@ -184,10 +184,9 @@ async def start(client, message):
     todays_date = current_datetime.strftime('%d%m%y')
 
     #/////////////////////////////////////////////////
-    user_id = message.from_user.id
     base64_date = str(todays_date).encode('utf-8')  # Convert to bytes
     encoded_todays_date = base64.urlsafe_b64encode(base64_date).decode('utf-8')
-    user_id_bytes = str(user_id).encode('utf-8')  # Convert to bytes
+    user_id_bytes = str(message.from_user.id).encode('utf-8')  # Convert to bytes
     urlsafe_encoded_user_id = base64.urlsafe_b64encode(user_id_bytes).decode('utf-8')
 
     data = message.command[1].strip()
