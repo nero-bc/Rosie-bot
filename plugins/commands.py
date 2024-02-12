@@ -167,7 +167,6 @@ async def start(client, message):
         )
         return
     
-
     # for counting each files for user
     files_counts = await db.fetch_value(message.from_user.id, "files_count") or 0
     lifetime_files = await db.fetch_value(message.from_user.id, "lifetime_files")
