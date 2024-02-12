@@ -67,19 +67,21 @@ async def filters_private_handlers(client, message):
     # update top messages
     await mdb.update_top_messages(message.from_user.id, message.text)   
 
+    invite_link = None
     if FORCESUB_CHANNEL and forcesub and not await is_subscribed(client, message):
         try:
             invite_link = await client.create_chat_invite_link(int(FORCESUB_CHANNEL), creates_join_request=True)
         except Exception as e:
             logger.error(e)
-        btn = [
-            [InlineKeyboardButton("Join now", url=invite_link.invite_link)],
-            [InlineKeyboardButton("Try again", callback_data="checkjoin")]
-        ]
-        await message.reply_text(
-            f"<b>🐾 Due to overload only channel subscriber can use this bot.</b>\nPlease join my channel to use this bot",
-            reply_markup=InlineKeyboardMarkup(btn),
-        )
+        if invite_link:
+            btn = [
+                [InlineKeyboardButton("Join now", url=invite_link.invite_link)],
+                [InlineKeyboardButton("Try again", callback_data="checkjoin")]
+            ]
+            await message.reply_text(
+                f"<b>🐾 Due to overload only channel subscriber can use this bot.</b>\nPlease join my channel to use this bot",
+                reply_markup=InlineKeyboardMarkup(btn),
+            )
         return
     
     if referral is not None and referral >= 50:
