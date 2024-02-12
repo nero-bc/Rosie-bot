@@ -214,9 +214,9 @@ async def start(client, message):
             user_id = message.from_user.id
             user_id_bytes = str(user_id).encode('utf-8')  # Convert to bytes
             urlsafe_encoded_user_id = base64.urlsafe_b64encode(user_id_bytes).decode('utf-8') 
-            verify = await shortlink(f"https://t.me/{temp.U_NAME}?start=verify-{urlsafe_encoded_user_id}")
+            verify = await shortlink(f"https://t.me/{temp.U_NAME}?start=Verify-{urlsafe_encoded_user_id}")
             return await message.reply(
-                f"<b>Your free limit is over, Please watch ads to help us sustain, You can click below button to verify yourself and enjoy all day ads free expreience</b>",
+                f"<b>Your free limit is over, Please watch ads to help us sustain, You can click below button to verify yourself and enjoy all day ads free expreience.</b>",
                 reply_markup=InlineKeyboardMarkup(
                     [
                         [InlineKeyboardButton("Verify Yourself", url=f"{verify}")],
@@ -245,18 +245,18 @@ async def start(client, message):
 
     # Verify system
     elif data.split("-", 1)[0] == "Verify":
-        user_id = int(data.split("-", 1)[1])
-        user_id_bytes = base64.urlsafe_b64decode(user_id) 
-        decoded_user_id = user_id_bytes.decode('utf-8')  # Convert to bytes
+        user_id_b64 = data.split("-", 1)[1]
+        user_id_bytes = base64.urlsafe_b64decode(user_id_b64 + '==') 
+        decoded_user_id = int(user_id_bytes.decode('utf-8'))  # Convert to bytes
+        print(decoded_user_id)
         is_verified = await db.fetch_value(message.from_user.id, "verified")
         if is_verified is True:
             return await message.reply(f"<b>You are already verified</b>")
-        if str(decoded_user_id) != str(message.from_user.id):
-            return await message.reply(f"<b>Vefification unsuccessful; You are not a valid user</b>")
+        if decoded_user_id != message.from_user.id:
+            return await message.reply(f"<b>Verification unsuccessful; You are not a valid user</b>")
         else:
             await db.update_value(message.from_user.id, "verified", True)
             await message.reply(f"<b>Verification successful; You can continue the search</b>")
-
 
     # Referral sysytem
     elif data.split("-", 1)[0] == "ReferID":

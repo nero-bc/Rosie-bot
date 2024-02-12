@@ -170,7 +170,7 @@ class Database:
     async def update_value(self, user_id, key, value):
         user = await self.col.find_one({"id": user_id})
         if user is None:
-            await self.add_user(user_id, "None")
+            await self.add_user(user_id)
             return
         await self.col.update_one({"id": user_id}, {"$set": {key: value}})
 
