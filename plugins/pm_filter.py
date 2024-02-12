@@ -9,7 +9,7 @@ from urllib.parse import quote
 from Script import script
 import aiohttp
 import ast
-from info import SLOW_MODE_DELAY, ADMINS, AUTH_GROUPS, FORCESUB_CHANNEL, WAIT_TIME, BIN_CHANNEL, URL, ACCESS_KEY
+from info import SLOW_MODE_DELAY, ADMINS, FORCESUB_CHANNEL, WAIT_TIME, BIN_CHANNEL, URL, ACCESS_KEY
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from pyrogram import Client, filters
 from database.users_chats_db import db
