@@ -152,7 +152,9 @@ async def filters_private_handlers(client, message):
 
     except Exception as e:
         logger.error(e)
-        await msg.edit(f"<b>Opps! Something Went Wrong.</b>")
+        w = await message.reply(f"<b>Opps! Something Went Wrong.</b>")
+        await asyncio.sleep(5)
+        await w.delete()
 
     finally:
         await asyncio.sleep(WAIT_TIME)
