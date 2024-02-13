@@ -316,18 +316,6 @@ async def replace_blacklist(file_name, blacklist, remove_special_chars=False, re
         file_name = re.sub(r'_|\n\n+', ' ', file_name)
     return file_name 
 
-
-async def base64_encode(text):
-    base = str(text).encode('utf-8')
-    encode = base64.urlsafe_b64encode(base).decode('utf-8')
-    return encode
-
-async def base64_decode(text):
-    base = base64.urlsafe_b64decode(text)
-    decode = base.decode('utf-8')
-    return decode
-
-
 # To fetch random Quotes
 async def fetch_quote_content():
     url = "https://api.quotable.io/quotes/random"
