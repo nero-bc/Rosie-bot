@@ -280,7 +280,7 @@ async def start(client, message):
 
         if safe_decoded_date != todays_date:
             return await message.reply(
-                text=f"<b>Invalid verification link; Please click this button below to verify yourself.</b>",
+                text=f"<b>📌 Invalid verification link; Please click this button below to verify yourself.</b>",
                 reply_markup=InlineKeyboardMarkup(
                     [
                         [InlineKeyboardButton("❇️ Verify", url=f"{verification}")]
