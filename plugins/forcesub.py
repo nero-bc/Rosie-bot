@@ -13,7 +13,7 @@ async def private_fsub(client: Client, message: ChatJoinRequest):
         pass    
 
 @Client.on_message(filters.private & filters.command("resetforcesub") & filters.user(ADMINS))
-async def reset_forcesub(client, message):
+async def reset_forcesub(_, message):
     m = await message.reply_text("Resetting Force Sub...")
     try:
         await db.reset_all_users_joined()
