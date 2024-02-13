@@ -97,7 +97,7 @@ async def filters_private_handlers(client, message):
         await db.reset_verification_status()
     
     if maintenance_mode is True:
-        await message.reply_text(f"<b>Sorry For The Inconvenience, We Are Under Maintenance. Please Try Again Later</b>", disable_web_page_preview=True)
+        await message.reply_text(f"<b>Sorry for the inconvenience, we are under Maintenance. We'll be back soon!</b>", disable_web_page_preview=True)
         return
     
     if private_filter is False:
