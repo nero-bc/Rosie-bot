@@ -771,6 +771,8 @@ async def cb_handler(client: Client, query: CallbackQuery):
             ],[
             InlineKeyboardButton("GPLinks ⚪️" if shortnr == "gplinks" else "GPLinks", callback_data="gplinks"),
             ],[
+            InlineKeyboardButton("UrlShare ⚪️" if shortnr == "urlshare" else "UrlShare", callback_data="urlshare"),
+            ],[
             InlineKeyboardButton("AdLinkfly ⚪️" if shortnr == "adlinkfly" else "AdLinkFly", callback_data="adlinkfly"),
             ],[
             InlineKeyboardButton("⛔️ Close", callback_data="close_data")
@@ -787,13 +789,15 @@ async def cb_handler(client: Client, query: CallbackQuery):
     elif query.data == "gplinks":
         await set_shortner(query, "gplinks")
     elif query.data == "adlinkfly":
-        await set_shortner(query, "adlinkfly")   
+        await set_shortner(query, "adlinkfly")
+    elif query.data == "urlshare":
+        await set_shortner(query, "urlshare")      
 
     await query.answer('Share & Support Us♥️')
 
 async def set_shortner(query, shortner):
     await mdb.update_configuration("shortner", shortner)
-    await query.message.edit(f"<b>{shortner} shortner enabled.</b>", reply_markup=None)    
+    await query.message.edit(f"<b>{shortner} shortner enabled.</b>", reply_markup=None)
 
 async def toggle_config(query, config_key, message):
     config = await mdb.get_configuration_value(config_key)
