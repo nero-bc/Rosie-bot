@@ -15,7 +15,6 @@ async def verupikkals(bot, message):
         text='Broadcasting your messages...'
     )   
 
-
     start_time = time.time()
     total_users = await db.total_users_count()
     done = 0
@@ -51,7 +50,6 @@ async def verupikkals(bot, message):
 
     time_taken = datetime.timedelta(seconds=int(time.time()-start_time))
     await sts.edit(f"Broadcast Completed:\nCompleted in {time_taken} seconds.\n\nTotal Users {total_users}\nCompleted: {done} / {total_users}\nSuccess: {success}\nBlocked: {blocked}\nDeleted: {deleted}")
-
 
 async def broadcast_func(user, b_msg):
         success, blocked, deleted, failed, done = 0, 0, 0, 0, 0
