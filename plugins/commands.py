@@ -288,7 +288,7 @@ async def start(client, message):
                 disable_web_page_preview=True
                 )
         elif is_verified is True:
-            return await message.reply(f"<b>You are already verified</b>")
+            return await message.reply(f"<b>You're already verified</b>")
         elif decoded_user_id != message.from_user.id:
             return await message.reply(f"<b>Verification unsuccessful; You are not a valid user</b>")
         else:
