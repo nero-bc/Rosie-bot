@@ -2,7 +2,7 @@ from pyrogram import Client, filters
 from database.users_chats_db import db
 import asyncio
 from Script import script
-from info import LOG_CHANNEL, AUTH_GROUPS, BIN_CHANNEL, URL, ADMINS, WAIT_TIME
+from info import LOG_CHANNEL, AUTH_GROUPS, BIN_CHANNEL, URL, ADMINS, WAIT_TIME, INDEX_USER
 from utils import temp
 import re
 from datetime import datetime, timedelta
@@ -27,7 +27,7 @@ async def echo(_, message):
     response_text = f"<b>Hello</b>, {message.from_user.mention}!\n<b>Please Provide The Name Of The Movie Or Series You're Looking For, and I'll Help You To Find It..</b>"
     await message.reply_text(response_text, reply_to_message_id=message.id, disable_web_page_preview=True)
 
-@Client.on_message(filters.media & ~filters.photo & filters.private & ~filters.user(ADMINS))
+@Client.on_message(filters.media & ~filters.photo & filters.private & ~filters.user(INDEX_USER))
 async def media_dl_filter(client, message):
     m=await message.reply_text("<b>Please Don't Send Any Files In My PM. It Will Be Deleted Within 1 Minute.</b>", reply_to_message_id=message.id)
     await asyncio.sleep(60)
@@ -129,7 +129,7 @@ async def resetdaily(client, message):
 async def resetdailyuser(client, message):
     user_id = message.command[1]
     if len(message.command) < 2:
-        return await message.reply("Please provide a user id / username")
+        return await message.reply("Please provide a user id /username")
     m = await message.reply_text("Resetting daily files count of user...")
     await asyncio.sleep(2)
     success = await db.reset_daily_files_count(user_id)
