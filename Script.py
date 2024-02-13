@@ -55,7 +55,6 @@ By using our service, you confirm that you have read, understood, and agreed to 
 
     # Ads placement
     ADS_TEXT = """
-<b>📢 Ads Placement</b>\nReach a wide audience at a minimal cost with impression-based ads, That means you only pay for the times your ad is actually seen! <a href=https://graph.org/Ads-Placement-Screenshot-12-25-2>Screenshot</a>\n
-<b>📌 Price</b>\n₹0.5/impression, ₹500/1k impressions\n
-<b>To place your ads contact </b><a href=https://t.me/lemx4>L E M O N</a>
+<b>📢 Ads Placement</b>\nReach a wide audience at a minimal cost with impression-based ads, That means you only pay for the times your ad is actually seen! <a href=https://graph.org/Ads-Placement-Screenshot-02-13>Screenshot</a>\n
+<b>📍 To place your ads contact </b><a href=https://t.me/lemx4>L E M O N</a>
 """
