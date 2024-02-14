@@ -222,7 +222,7 @@ async def start(client, message):
             user_id_bytes = str(message.from_user.id).encode('utf-8')  # Convert to bytes
             urlsafe_encoded_user_id = base64.urlsafe_b64encode(user_id_bytes).decode('utf-8')
             #verify link
-            link = f"https://t.me/{temp.U_NAME}?start=Verify-{urlsafe_encoded_user_id}-{encoded_todays_date}"
+            link = f"https://telegram.me/{temp.U_NAME}?start=Verify-{urlsafe_encoded_user_id}-{encoded_todays_date}"
             verifilink = await shortlink(link)
             await message.reply(
                 f"<b>🎏 Your free limit has been reached. To continue enjoying an ad-free experience full day, please verify yourself by clicking the button below or <a href=https://t.me/{temp.U_NAME}?start=upgrade>upgrade to premium</a></b>",
@@ -274,7 +274,7 @@ async def start(client, message):
         safe_decoded_date = decoded_date.decode('utf-8')  # Convert to string
         
         #verify link
-        verifi = f"https://t.me/{temp.U_NAME}?start=Verify-{urlsafe_encoded_user_id}-{encoded_todays_date}"
+        verifi = f"https://telegram.me/{temp.U_NAME}?start=Verify-{urlsafe_encoded_user_id}-{encoded_todays_date}"
         verification = await shortlink(verifi)               
         is_verified = await db.fetch_value(message.from_user.id, "verified")
 
