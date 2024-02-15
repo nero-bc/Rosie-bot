@@ -69,7 +69,7 @@ async def start(client, message):
     data = message.command[1]
     forcesub = await mdb.get_configuration_value("forcesub")
     lifetime_files = await db.fetch_value(message.from_user.id, "lifetime_files")
-    if not data.split("-", 1)[0] == "ReferID" and FORCESUB_CHANNEL and forcesub and not await is_subscribed(client, message) and lifetime_files >= 10: # forcesub limit 10
+    if not data.split("-", 1)[0] == "ReferID" and FORCESUB_CHANNEL and forcesub and not await is_subscribed(client, message) and lifetime_files is not None and lifetime_files >= 10: # forcesub limit 10
         try:
             invite_link = await client.create_chat_invite_link(int(FORCESUB_CHANNEL), creates_join_request=True)
         except Exception as e:
@@ -214,7 +214,7 @@ async def start(client, message):
         if premium_status is not True and files_counts is not None and files_counts >= 15:
                 return await message.reply(f"<b>You Have Exceeded Your Daily Limit. Please Try After {time_difference} Hours, or  <a href=https://t.me/{temp.U_NAME}?start=upgrade>Upgrade</a> To Premium For Unlimited Request.</b>", disable_web_page_preview=True)
         
-        if premium_status is not True and (is_verified is None or is_verified is False) and no_ads is False and lifetime_files >= FREE_LIMIT:
+        if premium_status is not True and (is_verified is None or is_verified is False) and no_ads is False and lifetime_files is not None and lifetime_files >= FREE_LIMIT:
             # encoded date
             base64_date = str(todays_date).encode('utf-8')  # Convert to bytes
             encoded_todays_date = base64.urlsafe_b64encode(base64_date).decode('utf-8')
@@ -222,7 +222,7 @@ async def start(client, message):
             user_id_bytes = str(message.from_user.id).encode('utf-8')  # Convert to bytes
             urlsafe_encoded_user_id = base64.urlsafe_b64encode(user_id_bytes).decode('utf-8')
             #verify link
-            link = f"https://t.me/{temp.U_NAME}?start=Verify-{urlsafe_encoded_user_id}-{encoded_todays_date}"
+            link = f"https://telegram.me/{temp.U_NAME}?start=Verify-{urlsafe_encoded_user_id}-{encoded_todays_date}"
             verifilink = await shortlink(link)
             await message.reply(
                 f"<b>🎏 Your free limit has been reached. To continue enjoying an ad-free experience full day, please verify yourself by clicking the button below or <a href=https://t.me/{temp.U_NAME}?start=upgrade>upgrade to premium</a></b>",
@@ -274,7 +274,7 @@ async def start(client, message):
         safe_decoded_date = decoded_date.decode('utf-8')  # Convert to string
         
         #verify link
-        verifi = f"https://t.me/{temp.U_NAME}?start=Verify-{urlsafe_encoded_user_id}-{encoded_todays_date}"
+        verifi = f"https://telegram.me/{temp.U_NAME}?start=Verify-{urlsafe_encoded_user_id}-{encoded_todays_date}"
         verification = await shortlink(verifi)               
         is_verified = await db.fetch_value(message.from_user.id, "verified")
 
