@@ -8,10 +8,7 @@ import asyncio
 
 @Client.on_message(filters.command("broadcast") & filters.user(ADMINS) & filters.reply)
 async def verupikkals(bot, message):
-    cursor = await db.get_all_users()
-    users = []
-    async for user in cursor:
-        users.append(user)
+    users = await db.get_all_users()
     b_msg = message.reply_to_message
     sts = await message.reply_text(
         text='Broadcasting your messages...'
@@ -23,6 +20,7 @@ async def verupikkals(bot, message):
     blocked = 0
     deleted = 0
     failed =0
+
     success = 0
 
     sem = asyncio.Semaphore(10) # limit the number of concurrent tasks to 100
@@ -32,9 +30,13 @@ async def verupikkals(bot, message):
             res = await broadcast_func(user, b_msg)
             return res
 
-    tasks = [run_task(user) for user in await cursor.to_list(length=None)]
-    for future in asyncio.as_completed(tasks):
-        res = await future
+    tasks = []
+
+    async for user in users:
+        task = asyncio.ensure_future(run_task(user))
+        tasks.append(task)
+        
+    for res in await asyncio.gather(*tasks):
         success1, blocked1, deleted1, failed1, done1 = res
         done += done1
         blocked += blocked1
