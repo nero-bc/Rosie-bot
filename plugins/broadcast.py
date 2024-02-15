@@ -8,10 +8,11 @@ import asyncio
 
 @Client.on_message(filters.command("broadcast") & filters.user(ADMINS) & filters.reply)
 async def verupikkals(bot, message):
-    cursor = db.get_all_users()
+    cursor = await db.get_all_users()
     users = []
     async for user in cursor:
         users.append(user)
+    # rest of your code
     b_msg = message.reply_to_message
     sts = await message.reply_text(
         text='Broadcasting your messages...'
