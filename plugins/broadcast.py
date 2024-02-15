@@ -12,7 +12,6 @@ async def verupikkals(bot, message):
     users = []
     async for user in cursor:
         users.append(user)
-    # rest of your code
     b_msg = message.reply_to_message
     sts = await message.reply_text(
         text='Broadcasting your messages...'
