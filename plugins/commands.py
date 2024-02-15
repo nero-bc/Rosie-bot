@@ -69,7 +69,7 @@ async def start(client, message):
     data = message.command[1]
     forcesub = await mdb.get_configuration_value("forcesub")
     lifetime_files = await db.fetch_value(message.from_user.id, "lifetime_files")
-    if not data.split("-", 1)[0] == "ReferID" and FORCESUB_CHANNEL and forcesub and not await is_subscribed(client, message) and lifetime_files >= 10: # forcesub limit 10
+    if not data.split("-", 1)[0] == "ReferID" and FORCESUB_CHANNEL and forcesub and not await is_subscribed(client, message) and lifetime_files is not None and lifetime_files >= 10: # forcesub limit 10
         try:
             invite_link = await client.create_chat_invite_link(int(FORCESUB_CHANNEL), creates_join_request=True)
         except Exception as e:
@@ -214,7 +214,7 @@ async def start(client, message):
         if premium_status is not True and files_counts is not None and files_counts >= 15:
                 return await message.reply(f"<b>You Have Exceeded Your Daily Limit. Please Try After {time_difference} Hours, or  <a href=https://t.me/{temp.U_NAME}?start=upgrade>Upgrade</a> To Premium For Unlimited Request.</b>", disable_web_page_preview=True)
         
-        if premium_status is not True and (is_verified is None or is_verified is False) and no_ads is False and lifetime_files >= FREE_LIMIT:
+        if premium_status is not True and (is_verified is None or is_verified is False) and no_ads is False and lifetime_files is not None and lifetime_files >= FREE_LIMIT:
             # encoded date
             base64_date = str(todays_date).encode('utf-8')  # Convert to bytes
             encoded_todays_date = base64.urlsafe_b64encode(base64_date).decode('utf-8')
