@@ -32,8 +32,7 @@ async def verupikkals(bot, message):
             res = await broadcast_func(user, b_msg)
             return res
 
-    tasks = (run_task(user) for user in users)
-
+    tasks = [run_task(user) for user in await cursor.to_list(length=None)]
     for future in asyncio.as_completed(tasks):
         res = await future
         success1, blocked1, deleted1, failed1, done1 = res
