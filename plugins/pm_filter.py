@@ -69,7 +69,7 @@ async def filters_private_handlers(client, message):
     await mdb.update_top_messages(message.from_user.id, message.text)   
 
     invite_link = None
-    if FORCESUB_CHANNEL and forcesub and not await is_subscribed(client, message) and lifetime_files_count >= 10:
+    if FORCESUB_CHANNEL and forcesub and not await is_subscribed(client, message) and lifetime_files_count is not None and lifetime_files_count >= 10:
         try:
             invite_link = await client.create_chat_invite_link(int(FORCESUB_CHANNEL), creates_join_request=True)
         except Exception as e:
@@ -636,7 +636,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
         truncated_messages = []
 
         for msg in top_searches:
-            if msg.lower() not in unique_messages and is_valid_string(msg):
+            if msg.lower() not in unique_messages and is_valid_string(msg) and not msg.startswith('@'):
                 unique_messages.add(msg.lower())
 
                 files, _, _ = await get_search_results(msg.lower())

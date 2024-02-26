@@ -1,4 +1,3 @@
-
 from pyrogram import Client, filters
 import datetime
 import time
@@ -24,7 +23,7 @@ async def verupikkals(bot, message):
 
     success = 0
 
-    sem = asyncio.Semaphore(25) # limit the number of concurrent tasks to 100
+    sem = asyncio.Semaphore(10) # limit the number of concurrent tasks to 100
 
     async def run_task(user):
         async with sem:
