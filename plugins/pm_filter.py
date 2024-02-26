@@ -32,7 +32,7 @@ async def filters_private_handlers(client, message):
     if not await db.is_user_exist(message.from_user.id):
         await db.add_user(message.from_user.id, message.from_user.first_name)
 
-    if message.text.startswith("/"):
+    if message.text.startswith(("/", "@")):
         return
     
     url_pattern = re.compile(r'https?://\S+')

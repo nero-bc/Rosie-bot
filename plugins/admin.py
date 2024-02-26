@@ -374,15 +374,14 @@ async def latests(_, message):
     await message.reply_text(f"<b>Here are the top searches of the day</b>", reply_markup=reply_markup)
     await m.delete()
 
-@Client.on_message(filters.command('deletetop') & filters.user(ADMINS))
+@Client.on_message(filters.command('deltop') & filters.user(ADMINS))
 async def delete_top(_, message):
-    text = message.text.split(None, 1)
+    text = message.command[1]
     if len(text) <= 1:
         await message.reply_text("Please provide a message to delete.")
         return
-
     try:
-        await mdb.delete_specific_message_globally(text[1])
+        await mdb.delete_specific_message_globally(text)
     except Exception as e:
         await message.reply_text(f"An error occurred: {e}")
 
