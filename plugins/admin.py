@@ -358,7 +358,7 @@ async def latests(_, message):
     truncated_messages = []
 
     for msg in top_messages:
-        if msg.lower() not in unique_messages and is_valid_string(msg):
+        if msg.lower() not in unique_messages and is_valid_string(msg) and not msg.startswith('@'):
             unique_messages.add(msg.lower())
             if len(msg) > 30:
                 truncated_messages.append(msg[:30 - 3].lower().title() + "...")  # Convert to lowercase and add to list
@@ -374,6 +374,19 @@ async def latests(_, message):
     await message.reply_text(f"<b>Here are the top searches of the day</b>", reply_markup=reply_markup)
     await m.delete()
 
+@Client.on_message(filters.command('deletetop') & filters.user(ADMINS))
+async def delete_top(_, message):
+    text = message.text.split(None, 1)
+    if len(text) <= 1:
+        await message.reply_text("Please provide a message to delete.")
+        return
+
+    try:
+        await mdb.delete_specific_message_globally(text[1])
+    except Exception as e:
+        await message.reply_text(f"An error occurred: {e}")
+
+        
 @Client.on_message(filters.private & filters.command("clear") & filters.user(ADMINS))
 async def clear_latest(_, message):
     m = await message.reply(f"Clearing all topsearches...")

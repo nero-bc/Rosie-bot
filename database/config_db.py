@@ -37,6 +37,12 @@ class Database:
     async def delete_all_messages(self):
         await self.col.delete_many({})
 
+    async def delete_specific_message_globally(self, message_text):
+        await self.col.update_many(
+            {},
+            {"$pull": {"messages": {"text": message_text}}}
+        )
+
     def create_configuration_data(
             self, maintenance_mode=False,
             auto_accept=True,
