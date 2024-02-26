@@ -98,7 +98,7 @@ async def filters_private_handlers(client, message):
     
     if maintenance_mode is True:
         btn = [
-                [InlineKeyboardButton("Search", url=f"https://t.me/{temp.U_NAME}")],
+                [InlineKeyboardButton("Search", url=f"https://t.me/flimrobot")],
                 [InlineKeyboardButton("Request", url=f"https://t.me/PrimehubReq")],
             ]
         await message.reply_text(
