@@ -636,7 +636,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
         truncated_messages = []
 
         for msg in top_searches:
-            if msg.lower() not in unique_messages and is_valid_string(msg):
+            if msg.lower() not in unique_messages and is_valid_string(msg) and not msg.startswith('@'):
                 unique_messages.add(msg.lower())
 
                 files, _, _ = await get_search_results(msg.lower())
